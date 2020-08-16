@@ -5,12 +5,12 @@ bot = commands.Bot(command_prefix = '[')
 
 @bot.command
 async def ping(ctx):
-    await ctx.send('pong')
+	await ctx.send('pong')
 
 
 @bot.event
 async def on_ready():
-    print('\n' + bot.user.name + ' online')
+	print('\n' + bot.user.name + ' online')
 	print(bot.user.id)
 	print('---------------')
 
