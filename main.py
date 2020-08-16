@@ -7,4 +7,11 @@ bot = commands.Bot(command_prefix = '[')
 async def ping(ctx):
     await ctx.send('pong')
 
+
+@bot.event
+async def on_ready():
+    print('\n' + bot.user.name + ' online')
+	print(bot.user.id)
+	print('---------------')
+
 bot.run(os.getenv('TOKEN'))
