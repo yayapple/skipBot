@@ -3,7 +3,7 @@ import os
 
 bot = commands.Bot(command_prefix = '[')
 
-@bot.command
+@bot.command()
 async def ping(ctx):
 	await ctx.send('pong')
 
