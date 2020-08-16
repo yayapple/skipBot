@@ -41,8 +41,7 @@ class skip(commands.Cog):
 
 		elif len(args) != 1:
 			return await ctx.send('Please enter a valid username.')
-
-			
+	
 		elif args[0].lower == 'skipbot':
 			await ctx.send('hey thats me')
 

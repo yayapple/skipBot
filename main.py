@@ -1,6 +1,13 @@
+ # terrible code™ by nochef
+# my user id: 290983149507182592 (apple#9999)
+
+# now with multiple server support!!!!!!!
+# yay!!!!!
 
 # to do:
 # idk
+# put json docs into a folder and modify pys to work
+# make a import command that uses ONLY exported file format and uses insert_many for much improved speed
 
 import os
 import json
@@ -81,8 +88,14 @@ async def on_guild_remove(guild):
 async def load(ctx, extension):
 	if not ctx.author.id == 290983149507182592:
 		return
-	bot.load_extension(f'cogs.{extension}')
-	await ctx.send(f'loaded {extension}')
+	elif extension == '*':
+		for filename in os.listdir('./cogs'):
+			if filename.endswith('.py') and filename not in ['import.py']:
+				bot.load_extension(f'cogs.{filename[:-3]}')
+		await ctx.send('loaded all cogs')
+	else:
+		bot.load_extension(f'cogs.{extension}')
+		await ctx.send(f'loaded {extension}')
 
 @load.error
 async def loadError(ctx, error):
@@ -109,16 +122,11 @@ async def reloadError(ctx, error):
 	if isinstance(error, commands.CommandInvokeError):
 		await ctx.send('Could not load the cog.')
 
-
 # ready
 
 @bot.event
 async def on_ready():
 	print('\n' + bot.user.name + ' online\n' + str(bot.user.id) + '\n---------------')
-	for filename in os.listdir('./cogs'):
-		if filename.endswith('.py') and filename not in ['import.py']:
-			bot.load_extension(f'cogs.{filename[:-3]}')
-	print('\n cogs loaded')
 
 
 # run bot
