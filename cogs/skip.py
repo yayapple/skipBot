@@ -43,7 +43,7 @@ class skip(commands.Cog):
 			return await ctx.send('Please enter a valid username.')
 
 			
-		if args[0].lower == 'skipbot':
+		elif args[0].lower == 'skipbot':
 			await ctx.send('hey thats me')
 
 		name = args[0].lower().replace('\\', '') # format text

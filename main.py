@@ -1,13 +1,6 @@
- # terrible code™ by nochef
-# my user id: 290983149507182592 (apple#9999)
-
-# now with multiple server support!!!!!!!
-# yay!!!!!
 
 # to do:
 # idk
-# put json docs into a folder and modify pys to work
-# make a import command that uses ONLY exported file format and uses insert_many for much improved speed
 
 import os
 import json
@@ -20,7 +13,7 @@ def get_prefix(bot, message): # load prefix
 	with open('storage/prefixes.json', 'r') as f:
 		prefixes = json.load(f)
 	if not message.guild:
-		return '+'
+		return '?'
 	guildPrefix = prefixes.get(str(message.guild.id))
 	return guildPrefix
 
@@ -117,19 +110,15 @@ async def reloadError(ctx, error):
 		await ctx.send('Could not load the cog.')
 
 
-# load cogs on bot start
-
-for filename in os.listdir('./cogs'):
-	if filename.endswith('.py') and filename not in ['import.py']:
-		bot.load_extension(f'cogs.{filename[:-3]}')
-
 # ready
 
 @bot.event
 async def on_ready():
-	print('\n' + bot.user.name + ' online')
-	print(bot.user.id)
-	print('---------------')
+	print('\n' + bot.user.name + ' online\n' + str(bot.user.id) + '\n---------------')
+	for filename in os.listdir('./cogs'):
+		if filename.endswith('.py') and filename not in ['import.py']:
+			bot.load_extension(f'cogs.{filename[:-3]}')
+	print('\n cogs loaded')
 
 
 # run bot
