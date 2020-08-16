@@ -80,7 +80,9 @@ async def on_guild_remove(guild):
 
 ### COG COMMANDS ###
 
-
+for filename in os.listdir('./cogs'):
+	if filename.endswith('.py') and filename not in ['import.py']:
+		bot.load_extension(f'cogs.{filename[:-3]}')
 
 # load, unload, reload cogs
 
@@ -88,14 +90,10 @@ async def on_guild_remove(guild):
 async def load(ctx, extension):
 	if not ctx.author.id == 290983149507182592:
 		return
-	elif extension == '*':
-		for filename in os.listdir('./cogs'):
-			if filename.endswith('.py') and filename not in ['import.py']:
-				bot.load_extension(f'cogs.{filename[:-3]}')
-		await ctx.send('loaded all cogs')
 	else:
 		bot.load_extension(f'cogs.{extension}')
 		await ctx.send(f'loaded {extension}')
+
 
 @load.error
 async def loadError(ctx, error):
