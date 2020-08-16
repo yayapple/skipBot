@@ -1,0 +1,2 @@
+# skipBot
+funny discord ahahhhahhah
