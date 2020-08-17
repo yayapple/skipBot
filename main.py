@@ -95,7 +95,7 @@ async def load(ctx, extension):
 			bot.load_extension(f'cogs.{extension}')
 			await ctx.send(f'loaded {extension}')
 		except Exception as e:
-			await ctx.send(f'{type(e).__name__}: {e})
+			await ctx.send(f'{type(e).__name__}: {e}')
 
 @bot.command(aliases=['ul', 'u'])
 async def unload(ctx, extension):
@@ -116,7 +116,7 @@ async def reload(ctx, extension):
 			await ctx.send(f'reloaded {extension}')
 		except Exception as e:
 			await ctx.send(f'{type(e).__name__}: {e})
-			
+
 # ready
 
 @bot.event
