@@ -91,35 +91,32 @@ async def load(ctx, extension):
 	if not ctx.author.id == 290983149507182592:
 		return
 	else:
-		bot.load_extension(f'cogs.{extension}')
-		await ctx.send(f'loaded {extension}')
-
-
-@load.error
-async def loadError(ctx, error):
-	if isinstance(error, commands.CommandInvokeError):
-		await ctx.send('Could not load the cog.')
+		try:
+			bot.load_extension(f'cogs.{extension}')
+			await ctx.send(f'loaded {extension}')
+		except Exception as e:
+			await ctx.send(f'{type(e).__name__}: {e})
 
 @bot.command(aliases=['ul', 'u'])
 async def unload(ctx, extension):
 	if not ctx.author.id == 290983149507182592:
 		return
-	bot.unload_extension(f'cogs.{extension}')
-	await ctx.send(f'unloaded {extension}')
+	else:
+		bot.unload_extension(f'cogs.{extension}')
+		await ctx.send(f'unloaded {extension}')
 
 @bot.command(aliases=['rl', 'r'])
 async def reload(ctx, extension):
 	if not ctx.author.id == 290983149507182592:
 		return
-	bot.unload_extension(f'cogs.{extension}')
-	bot.load_extension(f'cogs.{extension}')
-	await ctx.send(f'reloaded {extension}')
-
-@reload.error
-async def reloadError(ctx, error):
-	if isinstance(error, commands.CommandInvokeError):
-		await ctx.send('Could not load the cog.')
-
+	else:
+		try:
+			bot.unload_extension(f'cogs.{extension}')
+			bot.load_extension(f'cogs.{extension}')
+			await ctx.send(f'reloaded {extension}')
+		except Exception as e:
+			await ctx.send(f'{type(e).__name__}: {e})
+			
 # ready
 
 @bot.event
