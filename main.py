@@ -115,7 +115,7 @@ async def reload(ctx, extension):
 			bot.load_extension(f'cogs.{extension}')
 			await ctx.send(f'reloaded {extension}')
 		except Exception as e:
-			await ctx.send(f'{type(e).__name__}: {e})
+			await ctx.send(f'{type(e).__name__}: {e}')
 
 # ready
 
