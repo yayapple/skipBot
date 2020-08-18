@@ -18,8 +18,6 @@ class say(commands.Cog):
 			await channel.send(' '.join(words))
 		except Exception as e:
 			await ctx.send(e)
-		finally:
-			await ct
 	
 def setup(bot):
 	bot.add_cog(say(bot))
