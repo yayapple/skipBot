@@ -14,8 +14,13 @@ class skip(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 		self.messid = {}
-		self.clearActive.start()
-
+		try:
+			self.clearActive.start()
+		except:
+			pass
+	
+	def cog_unload(self):
+		self.clearActive.stop()
 
 	@commands.command(aliases=['s'])
 	async def skip(self, ctx, *args):

@@ -11,6 +11,16 @@ class delall(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 		self.messid = {}
+		try:
+			self.clearActive.start()
+		except:
+			pass
+	
+	async def on_ready(self):
+		self.clearActive.start()
+
+	def cog_unload(self):
+		self.clearActive.stop()
 
 	@commands.command(aliases=['delall'])
 	async def reset(self, ctx):
@@ -54,11 +64,6 @@ class delall(commands.Cog):
 		for x in list(self.messid):
 			if time.time() - self.messid[x] > 120:
 				self.messid.pop(x)
-
-
-	@commands.Cog.listener()
-	async def on_ready(self):
-		self.clearActive.start()
 	
 
 def setup(bot):

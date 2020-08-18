@@ -14,7 +14,16 @@ class delskip(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 		self.messid = {}
+		try:
+			self.clearActive.start()
+		except:
+			pass
+	
+	async def on_ready(self):
+		self.clearActive.start()
 
+	def cog_unload(self):
+		self.clearActive.stop()
 
 	@commands.command(aliases=['ds', 'd'])
 	async def delskip(self, ctx, *args):
@@ -160,9 +169,6 @@ class delskip(commands.Cog):
 				self.messid.pop(x)
 
 
-	@commands.Cog.listener()
-	async def on_ready(self):
-		self.clearActive.start()
 
 
 def setup(bot):
