@@ -28,10 +28,6 @@ class status(commands.Cog):
 			activity = discord.Game(name=choice(self.status)))
 
 
-
-
 def setup(bot):
 	bot.add_cog(status(bot))
 
-def teardown(bot):
-  status.statusCycle.cancel()
