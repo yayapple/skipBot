@@ -80,6 +80,7 @@ class bothelp(commands.Cog):
 			`{0}ping`: Shows bot ping
 			`{0}joke`: Says a Club Penguin joke
 			`{0}invite`: Sends the bot invite
+			`{0}how`: ???
 			""".format(prefix),
 			inline=False
 			)
