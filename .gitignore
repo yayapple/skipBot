@@ -1,0 +1,4 @@
+/.vscode/
+.env
+Procfile
+__pychache__/

@@ -28,19 +28,6 @@ class _eval(commands.Cog):
 			'source': inspect.getsource
 		}
 
-		banned = [
-			'environ.',
-			'getenv(',
-			'.env',
-			'while True',
-			'eval(',
-			'exec('
-		]
-
-		if any(substring in body for substring in banned):
-			await ctx.send('no')
-			return
-
 		def cleanup_code(content):
 			"""Automatically removes code blocks from the code."""
 			# remove ```py\n```

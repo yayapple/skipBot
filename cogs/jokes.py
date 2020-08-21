@@ -24,7 +24,7 @@ class jokes(commands.Cog):
 		)
 
 		embed.set_footer(
-			text=f'{category}'
+			text=category
 		)
 
 		await ctx.send(embed=embed)
