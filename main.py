@@ -12,23 +12,32 @@
 import os
 import json
 from discord.ext import commands
+import pymongo
 
 
 # prefix handling
 
 def get_prefix(bot, message): # load prefix
-	with open('storage/prefixes.json', 'r') as f:
-		prefixes = json.load(f)
-	if not message.guild:
-		return '?'
-	guildPrefix = prefixes.get(str(message.guild.id))
+	with pymongo.MongoClient(os.environ.get('MONGO')) as client:
+		db = client['skips']
+		config = db['guild config']
+
+		guildEntry = config.find_one({'guild': message.guild.id})
+		if guildEntry is None:
+			guildPrefix = '?'
+		else:
+			guildPrefix = guildEntry.get('prefix')
+
 	return guildPrefix
 
-def get_channel(ctx):
-	with open('storage/channels.json', 'r') as f:
-		channels = json.load(f)
-	return channels.get(str(ctx.guild.id))
+def get_config(ctx):
+	with pymongo.MongoClient(os.environ.get('MONGO')) as client:
+		db = client['skips']
+		config = db['guild config']
 
+		guildEntry = config.find_one({'guild': ctx.guild.id})
+
+	return guildEntry
 
 bot = commands.Bot(command_prefix = get_prefix, case_insensitive = True)
 bot.remove_command('help')
@@ -36,14 +45,16 @@ bot.remove_command('help')
 # add prefix on guild join
 @bot.event
 async def on_guild_join(guild):
-	print('joined ' + str(guild.id))
-	with open('storage/prefixes.json', 'r') as f:
-		prefixes = json.load(f)
-
-	prefixes[str(guild.id)] = '?'
-
-	with open('storage/prefixes.json', 'w') as f:
-		json.dump(prefixes, f, indent = 2)
+	with pymongo.MongoClient(os.environ.get('MONGO')) as client:
+		db = client['skips']
+		config = db['guild config']
+		
+		config.insert_one({
+			'guild': guild.id,
+			'prefix': '?',
+			'default': '',
+			'channel': ''
+		})
 	
 	for channel in guild.text_channels:
 		if channel.permissions_for(guild.me).send_messages:
@@ -55,28 +66,11 @@ async def on_guild_join(guild):
 @bot.event
 async def on_guild_remove(guild):
 	print('left ' + str(guild.id))
-	with open('storage/prefixes.json', 'r') as f:
-		prefixes = json.load(f)
+	with pymongo.MongoClient(os.environ.get('MONGO')) as client:
+		db = client['skips']
+		config = db['guild config']
 
-	with open('storage/channels.json', 'r') as g:
-		channels = json.load(g)
-
-	with open('storage/amounts.json', 'r') as h:
-		amounts = json.load(h)
-
-	prefixes.pop(str(guild.id))
-	channels.pop(str(guild.id))
-	amounts.pop(str(guild.id))
-
-	with open('storage/prefixes.json', 'w') as f:
-		json.dump(prefixes, f, indent = 2)
-
-	with open('storage/channels.json', 'w') as g:
-		json.dump(channels, g, indent = 2)
-
-	with open('storage/amounts.json', 'w') as h:
-		json.dump(amounts, h, indent = 2)
-
+		config.delete_one({'guild': guild.id})
 
 ### COG COMMANDS ###
 

@@ -21,7 +21,8 @@ class export(commands.Cog):
 			db = client['skips']
 			skips = db['slist']
 			cursor = list(skips.find({'guild': ctx.guild.id}))
-			if type(cursor) != list:
+
+			if not cursor:
 				await ctx.send("There are no skips to export!")
 				return
 			for document in cursor:

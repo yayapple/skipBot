@@ -2,7 +2,7 @@
 
 import discord
 from discord.ext import commands
-from main import get_prefix
+from main import get_config
 
 class bothelp(commands.Cog):
 
@@ -12,7 +12,7 @@ class bothelp(commands.Cog):
 	@commands.command()
 	async def help(self, ctx, *command):
 		if command in (('skip',), ('skips',)):
-			prefix = get_prefix(ctx, ctx)
+			prefix = get_config(ctx).get('prefix')
 
 			embed = discord.Embed(
 				title="Skipping", 
@@ -52,7 +52,7 @@ class bothelp(commands.Cog):
 			return
 
 		
-		prefix = get_prefix(ctx, ctx)
+		prefix = get_config(ctx).get('prefix')
 
 		embed = discord.Embed(
 			title="skipBot Help", 
@@ -80,7 +80,6 @@ class bothelp(commands.Cog):
 			`{0}ping`: Shows bot ping
 			`{0}joke`: Says a Club Penguin joke
 			`{0}invite`: Sends the bot invite
-			`{0}how`: ???
 			""".format(prefix),
 			inline=False
 			)

@@ -1,8 +1,8 @@
 # misc commands unrelated to skipping.
 
 import discord
+import pymongo
 from discord.ext import commands
-import json
 from main import get_prefix
 
 class misc(commands.Cog):
@@ -20,15 +20,16 @@ class misc(commands.Cog):
 		if len(prefix) != 1:
 			return await ctx.send('Please enter a valid prefix.')
 
-		with open('storage/prefixes.json', 'r') as f:
-			prefixes = json.load(f)
+		with pymongo.MongoClient(os.environ.get('MONGO')) as client:
+			db = client['skips']
+			config = db['guild config']
 
-		prefixes[str(ctx.guild.id)] = prefix[0]
-
-		with open('storage/prefixes.json', 'w') as f:
-			json.dump(prefixes, f, indent = 2)
+			config.update(
+				{'guild': ctx.guild.id},
+				{'$set': {'prefix': prefix[0]}}
+			)
 		
-		await ctx.send(f'changed prefix to "{prefix}"')
+		await ctx.send(f'changed prefix to "{prefix[0]}"')
 
 	@prefix.error
 	async def permsError(ctx, error):	

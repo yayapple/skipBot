@@ -1,7 +1,8 @@
 # whitelist command to set skip channel
 
 from discord.ext import commands
-import json
+import os
+import pymongo
 
 class whitelist(commands.Cog):
 
@@ -14,13 +15,14 @@ class whitelist(commands.Cog):
 	@commands.command()
 	@commands.has_permissions(administrator=True)
 	async def whitelist(self, ctx):
-		with open('storage/channels.json', 'r') as f:
-			channels = json.load(f)
+		with pymongo.MongoClient(os.environ.get('MONGO')) as client:
+			db = client['skips']
+			config = db['guild config']
 
-		channels[str(ctx.guild.id)] = ctx.channel.id
-
-		with open('storage/channels.json', 'w') as f:
-			json.dump(channels, f, indent = 2)
+			config.update(
+				{'guild': ctx.guild.id},
+				{'$set': {'channel': ctx.channel.id}}
+			)
 
 		await ctx.send(f'Changed the whitelisted channel to {str(ctx.channel)}.')
 

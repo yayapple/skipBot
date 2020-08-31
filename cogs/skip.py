@@ -1,9 +1,11 @@
 # commands including or related to the skip command.
 
+# TODO:
+# make it so that the func gets the entire config list as a 2d array when initializing, then grab configs from there insted of querying the db every time
+
+
 from discord.ext import commands, tasks
-from cogs.default import get_default
-from main import get_prefix
-import json
+from main import get_config
 import time
 import pymongo
 import os
@@ -28,20 +30,18 @@ class skip(commands.Cog):
 		if not ctx.guild:
 			return await ctx.send('You can\'t do that here!')
 
-		p = get_prefix(ctx,ctx)		
-
-		with open('storage/channels.json', 'r') as f:
-			channels = json.load(f)
+		config = get_config(ctx)
+		p = config.get('prefix')
 		
 		# checks
 
-		if channels.get(str(ctx.guild.id)) is None:
+		if not config.get('channel'):
 			return await ctx.send(f'Please finish setting up the skip environment first with `{p}help skip`! (Missing whitelist)')
 
-		elif get_default(ctx) is None:
+		elif not config.get('default'):
 			return await ctx.send(f'Please finish setting up the skip environment first with `{p}help skip`! (Missing default)')
 
-		elif not ctx.channel.id == channels.get(str(ctx.guild.id)):
+		elif not ctx.channel.id == config.get('channel'):
 			return
 
 		elif len(args) != 1:
@@ -51,7 +51,7 @@ class skip(commands.Cog):
 			await ctx.send('hey thats me')
 
 		name = args[0].lower().replace('\\', '') # format text
-		defaultSkips = get_default(ctx)
+		defaultSkips = config.get('default')
 		
 
 		# skip file processing
@@ -95,7 +95,7 @@ class skip(commands.Cog):
 			return
 
 		name = message.content.split(' ')[0][1:-1]
-		defaultSkips = get_default(message)
+		defaultSkips = get_config(message).get('default')
 
 		with pymongo.MongoClient(os.environ.get('MONGO')) as client:
 			db = client['skips']

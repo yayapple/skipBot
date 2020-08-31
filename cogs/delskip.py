@@ -1,9 +1,7 @@
 # a command to delete a skip
 
 from discord.ext import commands, tasks
-from cogs.default import get_default
-from main import get_prefix
-import json
+from main import get_config
 import time
 import pymongo
 import os
@@ -31,30 +29,27 @@ class delskip(commands.Cog):
 		if not ctx.guild:
 			return await ctx.send('You can\'t do that here!')
 		
-		with open('storage/channels.json', 'r') as f:
-			channels = json.load(f)
+		config = get_config(ctx)
 		
-		p = get_prefix(ctx, ctx)
-
 		# checks
 
-		if channels.get(str(ctx.guild.id)) is None:
+		if not config.get('channel'):
 			return await ctx.send(f'Please finish setting up the skip environment first with `{p}help skip`! (Missing whitelist)')
 
-		if get_default(ctx) is None:
+		elif not config.get('default'):
 			return await ctx.send(f'Please finish setting up the skip environment first with `{p}help skip`! (Missing default)')
 
-		if not ctx.channel.id == channels.get(str(ctx.guild.id)):
+		elif not ctx.channel.id == config.get('channel'):
 			return
 
-		if len(args) != 1:
-			await ctx.send('who am i skipping lol')
-			return
+		elif len(args) != 1:
+			return await ctx.send('Please enter a valid username.')
+	
+		elif args[0].lower == 'skipbot':
+			await ctx.send('hey thats me')
 
 		name = args[0].lower().replace('\\', '') # format text
-
-		if name == 'skipbot':
-			await ctx.send('hey thats me')
+		defaultSkips = config.get('default')
 
 		# skip file processing
 		with pymongo.MongoClient(os.environ.get('MONGO')) as client:
@@ -93,7 +88,7 @@ class delskip(commands.Cog):
 			return
 
 		name = message.content.split(' ')[0][1:-1]
-		default = get_default(message)
+		defaultSkips = get_config(,essage).get('default')
 
 		with pymongo.MongoClient(os.environ.get('MONGO')) as client:
 			db = client['skips']
