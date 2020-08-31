@@ -88,7 +88,7 @@ class delskip(commands.Cog):
 			return
 
 		name = message.content.split(' ')[0][1:-1]
-		defaultSkips = get_config(,essage).get('default')
+		defaultSkips = get_config(message).get('default')
 
 		with pymongo.MongoClient(os.environ.get('MONGO')) as client:
 			db = client['skips']
