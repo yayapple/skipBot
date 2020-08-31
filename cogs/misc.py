@@ -31,6 +31,7 @@ class misc(commands.Cog):
 					'default': '',
 					'channel': ''
 				})
+				await ctx.send('registered')
 
 	# prefix command
 
