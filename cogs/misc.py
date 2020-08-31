@@ -11,6 +11,26 @@ class misc(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 
+	# register command (temp)
+
+	@commands.command()
+	async def register(self, ctx):
+
+		with pymongo.MongoClient(os.environ.get('MONGO')) as client:
+			db = client['skips']
+			config = db['guild config']
+
+			entry = config.find_one({'guild': ctx.guild.id})
+
+			if entry:
+				return await ctx.send('already registered')
+			else:
+				config.insert_one({
+					'guild': ctx.guild.id,
+					'prefix': '?',
+					'default': '',
+					'channel': ''
+				})
 
 	# prefix command
 
