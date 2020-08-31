@@ -2,6 +2,7 @@
 
 import discord
 import pymongo
+import os
 from discord.ext import commands
 from main import get_prefix
 
