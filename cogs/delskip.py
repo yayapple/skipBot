@@ -30,6 +30,7 @@ class delskip(commands.Cog):
 			return await ctx.send('You can\'t do that here!')
 		
 		config = get_config(ctx)
+		p = config.get('prefix')
 		
 		# checks
 
@@ -49,7 +50,6 @@ class delskip(commands.Cog):
 			await ctx.send('hey thats me')
 
 		name = args[0].lower().replace('\\', '') # format text
-		defaultSkips = config.get('default')
 
 		# skip file processing
 		with pymongo.MongoClient(os.environ.get('MONGO')) as client:
@@ -88,7 +88,7 @@ class delskip(commands.Cog):
 			return
 
 		name = message.content.split(' ')[0][1:-1]
-		defaultSkips = get_config(message).get('default')
+		default = get_config(message).get('default')
 
 		with pymongo.MongoClient(os.environ.get('MONGO')) as client:
 			db = client['skips']

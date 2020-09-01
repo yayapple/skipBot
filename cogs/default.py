@@ -3,7 +3,7 @@
 import pymongo
 import os
 from discord.ext import commands
-from main import get_config
+from main import updateDict	
 import discord
 
 class default(commands.Cog):
@@ -20,6 +20,8 @@ class default(commands.Cog):
 
 		elif len(args) != 1 or not args[0].isdigit():
 			return await ctx.send('Please enter a valid number!')
+
+		updateDict(ctx, 'default', int(args[0]))
 	
 		with pymongo.MongoClient(os.environ.get('MONGO')) as client:
 			db = client['skips']

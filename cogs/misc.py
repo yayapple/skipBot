@@ -4,7 +4,7 @@ import discord
 import pymongo
 import os
 from discord.ext import commands
-from main import get_prefix
+from main import get_prefix, updateDict, addEntry
 
 class misc(commands.Cog):
 
@@ -15,6 +15,8 @@ class misc(commands.Cog):
 
 	@commands.command()
 	async def register(self, ctx):
+
+		addEntry(ctx.guild)
 
 		with pymongo.MongoClient(os.environ.get('MONGO')) as client:
 			db = client['skips']
@@ -42,6 +44,8 @@ class misc(commands.Cog):
 		if len(prefix) != 1:
 			return await ctx.send('Please enter a valid prefix.')
 
+		updateDict(ctx, 'prefix', prefix[0])
+
 		with pymongo.MongoClient(os.environ.get('MONGO')) as client:
 			db = client['skips']
 			config = db['guild config']
@@ -54,7 +58,7 @@ class misc(commands.Cog):
 		await ctx.send(f'changed prefix to "{prefix[0]}"')
 
 	@prefix.error
-	async def permsError(ctx, error):	
+	async def permsError(self, ctx, error):	
 		if isinstance(error, commands.MissingPermissions):
 			await ctx.send('You must be an administrator to use that command.')
 

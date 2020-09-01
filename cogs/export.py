@@ -35,7 +35,7 @@ class export(commands.Cog):
 		os.remove(f'{ctx.guild.id}.txt')
 
 	@export.error
-	async def permsError(ctx, error):	
+	async def permsError(self, ctx, error):	
 		if isinstance(error, commands.MissingPermissions):
 			await ctx.send('You must be an administrator to use that command.')
 		

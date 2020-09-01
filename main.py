@@ -5,9 +5,7 @@
 # yay!!!!!
 
 # to do:
-# idk
-# put json docs into a folder and modify pys to work
-# make a import command that uses ONLY exported file format and uses insert_many for much improved speed
+# 60741
 
 import os
 import json
@@ -30,14 +28,42 @@ def get_prefix(bot, message): # load prefix
 
 	return guildPrefix
 
-def get_config(ctx):
-	with pymongo.MongoClient(os.environ.get('MONGO')) as client:
+entryDict = {}
+
+def get_data():
+	with pymongo.MongoClient(os.getenv('MONGO')) as client:
 		db = client['skips']
 		config = db['guild config']
+				
+		for entry in list(config.find()):
+			entryDict.update({
+				entry.get('guild'): {
+					'prefix': entry.get('prefix'),
+					'channel': entry.get('channel'),
+					'default': entry.get('default')
+				}
+			})
+			
+	print(entryDict)
 
-		guildEntry = config.find_one({'guild': ctx.guild.id})
+def updateDict(ctx, key, value):
+	entryDict.get(ctx.guild.id).update({key: value})
 
-	return guildEntry
+def addEntry(guild):
+	entryDict.update({
+		guild.id: {
+			'prefix': '?',
+			'channel': '',
+			'default': ''
+		}
+	})
+
+def get_config(ctx):
+	if not entryDict:
+		get_data()
+	return entryDict.get(ctx.guild.id)
+
+
 
 bot = commands.Bot(command_prefix = get_prefix, case_insensitive = True)
 bot.remove_command('help')
@@ -45,6 +71,9 @@ bot.remove_command('help')
 # add prefix on guild join
 @bot.event
 async def on_guild_join(guild):
+
+	addEntry(guild)
+
 	with pymongo.MongoClient(os.environ.get('MONGO')) as client:
 		db = client['skips']
 		config = db['guild config']

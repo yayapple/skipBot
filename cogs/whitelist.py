@@ -1,6 +1,7 @@
 # whitelist command to set skip channel
 
 from discord.ext import commands
+from main import updateDict
 import os
 import pymongo
 
@@ -15,6 +16,9 @@ class whitelist(commands.Cog):
 	@commands.command()
 	@commands.has_permissions(administrator=True)
 	async def whitelist(self, ctx):
+
+		updateDict(ctx, 'channel', ctx.channel.id)
+
 		with pymongo.MongoClient(os.environ.get('MONGO')) as client:
 			db = client['skips']
 			config = db['guild config']
