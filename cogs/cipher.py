@@ -18,13 +18,13 @@ class cipher(commands.Cog):
   @commands.dm_only()
   async def _part2(self, ctx):
     await ctx.send(os.getenv('Q2'))
-  # not real chinese?
+  # not real chinese haha hehe hoohoo
   
   @commands.command(name=os.getenv('A2'))
   @commands.dm_only()
   async def _part3(self, ctx):
     await ctx.send(os.getenv('Q3'))
-  # .png? .txt?
+  # this isnt a txt file !!!! or?????
 
   @_part2.error
   @_part3.error
