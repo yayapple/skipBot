@@ -16,14 +16,15 @@ import pymongo
 # prefix handling
 
 def get_prefix(bot, message): # load prefix
-	with pymongo.MongoClient(os.environ.get('MONGO')) as client:
-		db = client['skips']
-		config = db['guild config']
-
-		guildEntry = config.find_one({'guild': message.guild.id})
-		if guildEntry is None:
-			guildPrefix = '?'
-		else:
+	
+	if not message.guild:
+		guildPrefix = '?'
+	
+	else:
+		with pymongo.MongoClient(os.environ.get('MONGO')) as client:
+			db = client['skips']
+			config = db['guild config']
+			guildEntry = config.find_one({'guild': message.guild.id})
 			guildPrefix = guildEntry.get('prefix')
 
 	return guildPrefix
