@@ -1,8 +1,10 @@
 # only me command haha
 
 from discord.ext import commands
+import discord
 import inspect
 import io
+import asyncio
 import textwrap
 import traceback
 from contextlib import redirect_stdout
@@ -28,6 +30,32 @@ class _eval(commands.Cog):
 			'source': inspect.getsource
 		}
 
+		banned = [
+			'while True',
+			'eval(',
+			'exec(',
+			'import os',
+			'from os import',
+			'dotenv',
+			'pathlib'
+		]
+
+		def embed(mtype: str, out: str):
+			if mtype == 'Error':
+				color = discord.Color.red()
+			else:
+				color = discord.Color.gold()
+			embed = discord.Embed(
+				title = mtype,
+				description = out,
+				color = color
+			)
+			return embed
+
+		if any(substring in body for substring in banned):
+			await ctx.send(embed=embed('Output', '```no```'))
+			return
+
 		def cleanup_code(content):
 			"""Automatically removes code blocks from the code."""
 			# remove ```py\n```
@@ -36,6 +64,12 @@ class _eval(commands.Cog):
 
 			# remove `foo`
 			return content.strip('` \n')
+
+
+		def get_syntax_error(e):
+			if e.text is None:
+				return f'```py\n{e.__class__.__name__}: {e}\n```'
+			return f'```py\n{e.text}{"^":>{e.offset}}\n{e.__class__.__name__}: {e}```'
 
 		env.update(globals())
 
@@ -48,36 +82,41 @@ class _eval(commands.Cog):
 		try:
 			exec(to_compile, env)
 		except Exception as e:
-			err = await ctx.send(f'```py\n{e.__class__.__name__}: {e}\n```')
-			return await ctx.message.add_reaction('\u2049')
-
+			err = await ctx.send(embed=embed('Error', f'```py\n{e.__class__.__name__}: {e}\n```'))
+			await ctx.message.add_reaction('\u2049')
+			await asyncio.sleep(5)
+			await err.delete()
+			return 
 		func = env['func']
 		try:
 			with redirect_stdout(stdout):
 				ret = await func()
 		except:
 			value = stdout.getvalue()
-			err = await ctx.send(f'```py\n{value}{traceback.format_exc()}\n```')
+			err = await ctx.send(embed=embed('Error', f'```py\n{value}{traceback.format_exc()}\n```'))
 		else:
 			value = stdout.getvalue()
 			if ret is None:
 				if value:
 					if len(value) > 500:
 						value = value[:499] + '\n\n    Output Clipped '
-					out = await ctx.send(f'```py\n{value}\n```')
+					out = await ctx.send(embed=embed('Output', f'```py\n{value}\n```'))
 
 			else:
-				bruh = value + ret
+				bruh = value + str(ret)
 				if len(bruh) > 500:
 					bruh = bruh[:499] + '\n\n    Output Clipped'
-				out = await ctx.send(f'```py\n{bruh}\n```')
+				out = await ctx.send(embed=embed('Output', f'```py\n{bruh}\n```'))
 
 		if out:
 			await ctx.message.add_reaction('\u2705')  # tick
 		elif err:
-			await ctx.message.add_reaction('\u2049')  # x
+			await ctx.message.add_reaction('\u2049')
+			await asyncio.sleep(5)
+			await err.delete()  # x
 		else:
 			await ctx.message.add_reaction('\u2705')
+
 
 def setup(bot):
 	bot.add_cog(_eval(bot))
