@@ -1,11 +1,11 @@
- # terrible code™ by nochef
+# terrible code™ by nochef
 # my user id: 290983149507182592 (apple#9999)
 
 # now with multiple server support!!!!!!!
 # yay!!!!!
 
 # to do:
-# 60741
+# instead of calling updateDict and then updating the database, add updating the database to updateDict()
 
 import os
 import json
